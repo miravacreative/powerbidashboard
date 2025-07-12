@@ -7,6 +7,7 @@ import { PageCreationModal } from "@/components/page-creation-modal"
 import { PageEditModal } from "@/components/page-edit-modal"
 import { UserSettingsModal } from "@/components/user-settings-modal"
 import { PageViewer } from "@/components/page-viewer"
+import { UserDashboardEditor } from "@/components/user-dashboard-editor"
 import type { User, Page, ActivityLog } from "@/lib/auth"
 import {
   getAllUsers,
