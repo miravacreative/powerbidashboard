@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Code, Plus, Search, Eye, Edit, GitBranch, Database, Server, Activity } from "lucide-react"
+import { FileText, Edit, Plus, Search, Eye, ImageIcon, Layout, Calendar, Type } from "lucide-react"
 import { UserDashboardEditor } from "@/components/user-dashboard-editor"
 
 interface User {
@@ -19,16 +19,16 @@ interface User {
   avatar?: string
 }
 
-interface Project {
+interface Content {
   id: string
-  name: string
-  type: string
-  status: "active" | "maintenance" | "archived"
-  lastUpdated: string
-  version: string
+  title: string
+  type: "article" | "page" | "media"
+  status: "published" | "draft" | "review"
+  lastModified: string
+  author: string
 }
 
-export function DeveloperDashboard() {
+export function EditorDashboard() {
   const [activeTab, setActiveTab] = useState("overview")
   const [searchTerm, setSearchTerm] = useState("")
   const [viewingUserDashboard, setViewingUserDashboard] = useState<User | null>(null)
@@ -37,54 +37,54 @@ export function DeveloperDashboard() {
   const users: User[] = [
     {
       id: "1",
-      name: "Alice Johnson",
-      email: "alice@example.com",
+      name: "Sarah Connor",
+      email: "sarah@example.com",
       role: "user",
       status: "active",
       lastLogin: "2024-01-15 10:30 AM",
     },
     {
       id: "2",
-      name: "Bob Wilson",
-      email: "bob@example.com",
-      role: "editor",
+      name: "John Smith",
+      email: "john@example.com",
+      role: "user",
       status: "active",
       lastLogin: "2024-01-15 09:15 AM",
     },
     {
       id: "3",
-      name: "Carol Davis",
-      email: "carol@example.com",
+      name: "Emma Wilson",
+      email: "emma@example.com",
       role: "user",
       status: "inactive",
       lastLogin: "2024-01-14 03:45 PM",
     },
   ]
 
-  const projects: Project[] = [
+  const content: Content[] = [
     {
       id: "1",
-      name: "User Dashboard",
-      type: "Frontend",
-      status: "active",
-      lastUpdated: "2024-01-15",
-      version: "v2.1.0",
+      title: "Welcome Guide",
+      type: "article",
+      status: "published",
+      lastModified: "2024-01-15",
+      author: "Editor",
     },
     {
       id: "2",
-      name: "API Gateway",
-      type: "Backend",
-      status: "active",
-      lastUpdated: "2024-01-14",
-      version: "v1.8.2",
+      title: "User Dashboard Layout",
+      type: "page",
+      status: "draft",
+      lastModified: "2024-01-14",
+      author: "Editor",
     },
     {
       id: "3",
-      name: "Analytics Engine",
-      type: "Data",
-      status: "maintenance",
-      lastUpdated: "2024-01-12",
-      version: "v3.0.1",
+      title: "Hero Banner Image",
+      type: "media",
+      status: "review",
+      lastModified: "2024-01-13",
+      author: "Designer",
     },
   ]
 
@@ -102,12 +102,10 @@ export function DeveloperDashboard() {
       user.email.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const filteredProjects = projects.filter((project) => project.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredContent = content.filter((item) => item.title.toLowerCase().includes(searchTerm.toLowerCase()))
 
   if (viewingUserDashboard) {
-    return (
-      <UserDashboardEditor user={viewingUserDashboard} currentUserRole="developer" onBack={handleBackFromUserView} />
-    )
+    return <UserDashboardEditor user={viewingUserDashboard} currentUserRole="editor" onBack={handleBackFromUserView} />
   }
 
   return (
@@ -115,17 +113,17 @@ export function DeveloperDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Developer Dashboard</h1>
-          <p className="text-muted-foreground">Manage projects, code, and user interfaces</p>
+          <h1 className="text-3xl font-bold">Editor Dashboard</h1>
+          <p className="text-muted-foreground">Manage content, layouts, and user experiences</p>
         </div>
         <div className="flex items-center gap-2">
           <Button>
             <Plus className="w-4 h-4 mr-2" />
-            New Project
+            New Content
           </Button>
           <Button variant="outline">
-            <GitBranch className="w-4 h-4 mr-2" />
-            Deploy
+            <ImageIcon className="w-4 h-4 mr-2" />
+            Media Library
           </Button>
         </div>
       </div>
@@ -134,45 +132,47 @@ export function DeveloperDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
-            <Code className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Content</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{projects.filter((p) => p.status === "active").length}</div>
-            <p className="text-xs text-muted-foreground">{projects.length} total projects</p>
+            <div className="text-2xl font-bold">{content.length}</div>
+            <p className="text-xs text-muted-foreground">
+              {content.filter((c) => c.status === "published").length} published
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">API Calls</CardTitle>
-            <Server className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Draft Articles</CardTitle>
+            <Edit className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12.5K</div>
-            <p className="text-xs text-muted-foreground">+15% from yesterday</p>
+            <div className="text-2xl font-bold">{content.filter((c) => c.status === "draft").length}</div>
+            <p className="text-xs text-muted-foreground">Pending review</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Database Queries</CardTitle>
-            <Database className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">User Pages</CardTitle>
+            <Layout className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8.2K</div>
-            <p className="text-xs text-muted-foreground">Avg response: 45ms</p>
+            <div className="text-2xl font-bold">{users.length}</div>
+            <p className="text-xs text-muted-foreground">Editable dashboards</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">System Load</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Last Updated</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">Low</div>
-            <p className="text-xs text-muted-foreground">CPU: 23% | RAM: 45%</p>
+            <div className="text-2xl font-bold">Today</div>
+            <p className="text-xs text-muted-foreground">3 items modified</p>
           </CardContent>
         </Card>
       </div>
@@ -181,62 +181,62 @@ export function DeveloperDashboard() {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="projects">Projects</TabsTrigger>
+          <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="user-pages">User Pages</TabsTrigger>
-          <TabsTrigger value="api">API Management</TabsTrigger>
+          <TabsTrigger value="media">Media</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Projects */}
+            {/* Recent Content */}
             <Card>
               <CardHeader>
-                <CardTitle>Recent Projects</CardTitle>
+                <CardTitle>Recent Content</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {projects.slice(0, 3).map((project) => (
-                    <div key={project.id} className="flex items-center justify-between">
+                  {content.slice(0, 3).map((item) => (
+                    <div key={item.id} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                          {project.name.charAt(0)}
+                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                          {item.title.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-medium">{project.name}</p>
+                          <p className="font-medium">{item.title}</p>
                           <p className="text-sm text-muted-foreground">
-                            {project.type} • {project.version}
+                            {item.type} • {item.author}
                           </p>
                         </div>
                       </div>
-                      <Badge variant={project.status === "active" ? "default" : "secondary"}>{project.status}</Badge>
+                      <Badge variant={item.status === "published" ? "default" : "secondary"}>{item.status}</Badge>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
 
-            {/* System Status */}
+            {/* Content Statistics */}
             <Card>
               <CardHeader>
-                <CardTitle>System Status</CardTitle>
+                <CardTitle>Content Statistics</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">API Gateway</span>
-                    <Badge variant="default">Online</Badge>
+                    <span className="text-sm">Articles</span>
+                    <Badge variant="outline">{content.filter((c) => c.type === "article").length}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Database</span>
-                    <Badge variant="default">Healthy</Badge>
+                    <span className="text-sm">Pages</span>
+                    <Badge variant="outline">{content.filter((c) => c.type === "page").length}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Cache Server</span>
-                    <Badge variant="default">Active</Badge>
+                    <span className="text-sm">Media Files</span>
+                    <Badge variant="outline">{content.filter((c) => c.type === "media").length}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">CDN</span>
-                    <Badge variant="secondary">Maintenance</Badge>
+                    <span className="text-sm">Published</span>
+                    <Badge variant="default">{content.filter((c) => c.status === "published").length}</Badge>
                   </div>
                 </div>
               </CardContent>
@@ -244,13 +244,13 @@ export function DeveloperDashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="projects" className="space-y-6">
+        <TabsContent value="content" className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
-                  placeholder="Search projects..."
+                  placeholder="Search content..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 w-64"
@@ -259,32 +259,32 @@ export function DeveloperDashboard() {
             </div>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              New Project
+              New Content
             </Button>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Project Management</CardTitle>
+              <CardTitle>Content Management</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {filteredProjects.map((project) => (
-                  <div key={project.id} className="flex items-center justify-between p-4 border rounded-lg">
+                {filteredContent.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-medium">
-                        {project.name.charAt(0)}
+                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-medium">
+                        {item.title.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-medium">{project.name}</p>
+                        <p className="font-medium">{item.title}</p>
                         <p className="text-sm text-muted-foreground">
-                          {project.type} • Version {project.version}
+                          {item.type} • Modified {item.lastModified}
                         </p>
-                        <p className="text-xs text-muted-foreground">Last updated: {project.lastUpdated}</p>
+                        <p className="text-xs text-muted-foreground">By {item.author}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant={project.status === "active" ? "default" : "secondary"}>{project.status}</Badge>
+                      <Badge variant={item.status === "published" ? "default" : "secondary"}>{item.status}</Badge>
                       <Button variant="outline" size="sm">
                         <Edit className="w-4 h-4 mr-2" />
                         Edit
@@ -314,17 +314,15 @@ export function DeveloperDashboard() {
 
           <Card>
             <CardHeader>
-              <CardTitle>User Dashboard Management</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Preview and edit user dashboards with live editing capabilities
-              </p>
+              <CardTitle>User Dashboard Editing</CardTitle>
+              <p className="text-sm text-muted-foreground">Edit and customize user dashboard layouts and content</p>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {filteredUsers.map((user) => (
                   <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-medium">
+                      <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium">
                         {user.name.charAt(0)}
                       </div>
                       <div>
@@ -349,35 +347,27 @@ export function DeveloperDashboard() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="api" className="space-y-6">
+        <TabsContent value="media" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>API Management</CardTitle>
+              <CardTitle>Media Library</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 border rounded-lg">
-                    <h4 className="font-medium">GET /api/users</h4>
-                    <p className="text-sm text-muted-foreground">Fetch user data</p>
-                    <Badge variant="default" className="mt-2">
-                      Active
-                    </Badge>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h4 className="font-medium">PUT /api/pages/[id]</h4>
-                    <p className="text-sm text-muted-foreground">Update page content</p>
-                    <Badge variant="default" className="mt-2">
-                      Active
-                    </Badge>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h4 className="font-medium">POST /api/auth</h4>
-                    <p className="text-sm text-muted-foreground">Authentication</p>
-                    <Badge variant="default" className="mt-2">
-                      Active
-                    </Badge>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 border rounded-lg text-center">
+                  <ImageIcon className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                  <h4 className="font-medium">Images</h4>
+                  <p className="text-sm text-muted-foreground">24 files</p>
+                </div>
+                <div className="p-4 border rounded-lg text-center">
+                  <FileText className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                  <h4 className="font-medium">Documents</h4>
+                  <p className="text-sm text-muted-foreground">12 files</p>
+                </div>
+                <div className="p-4 border rounded-lg text-center">
+                  <Type className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                  <h4 className="font-medium">Templates</h4>
+                  <p className="text-sm text-muted-foreground">8 files</p>
                 </div>
               </div>
             </CardContent>
