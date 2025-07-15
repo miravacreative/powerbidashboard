@@ -56,7 +56,7 @@ const users: Record<string, User & { password: string }> = {
     lastLogin: new Date(),
     isActive: true,
   },
-  admin 2: {
+  admin2: {
     id: "2",
     username: "ferry",
     password: "ferry123",
