@@ -430,3 +430,64 @@ export const getPageSubTypes = () => {
     html: ["custom", "widget", "form", "landing"],
   }
 }
+
+export const updateUserPassword = (userId: string, currentPassword: string, newPassword: string): boolean => {
+  const userEntry = Object.entries(users).find(([_, user]) => user.id === userId)
+  if (userEntry) {
+    const [username, user] = userEntry
+    if (user.password === currentPassword) {
+      users[username] = { ...user, password: newPassword }
+      logActivity(userId, "password_change", `User ${user.name} changed password`)
+      return true
+    }
+  }
+  return false
+}
+
+export const getUserAccessiblePages = (userId: string): Page[] => {
+  const user = Object.values(users).find((u) => u.id === userId)
+  if (!user) return []
+
+  const allPages = Object.values(pages)
+  
+  // Admin and Developer can see all active pages
+  if (user.role === "admin" || user.role === "developer") {
+    return allPages.filter(page => page.isActive)
+  }
+  
+  // Regular users can only see assigned pages
+  return allPages.filter(page => 
+    page.isActive && user.assignedPages?.includes(page.id)
+  )
+}
+
+// Auto-save functionality for pages and users
+export const autoSavePage = (pageData: Partial<Page> & { id: string }): boolean => {
+  try {
+    if (pages[pageData.id]) {
+      pages[pageData.id] = { ...pages[pageData.id], ...pageData, updatedAt: new Date() }
+      logActivity(pageData.createdBy || "system", "page_auto_save", `Auto-saved page: ${pages[pageData.id].title}`)
+      return true
+    }
+    return false
+  } catch (error) {
+    console.error("Auto-save failed:", error)
+    return false
+  }
+}
+
+export const autoSaveUser = (userData: Partial<User> & { id: string }): boolean => {
+  try {
+    const userEntry = Object.entries(users).find(([_, user]) => user.id === userData.id)
+    if (userEntry) {
+      const [username, user] = userEntry
+      users[username] = { ...user, ...userData }
+      logActivity(userData.id, "user_auto_save", `Auto-saved user: ${user.name}`)
+      return true
+    }
+    return false
+  } catch (error) {
+    console.error("Auto-save failed:", error)
+    return false
+  }
+}

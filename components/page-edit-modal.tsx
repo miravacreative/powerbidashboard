@@ -53,10 +53,19 @@ export function PageEditModal({ isOpen, onClose, onSuccess, page, userId }: Page
     setError("")
 
     try {
-      updatePage(page.id, {
+      const success = updatePage(page.id, {
         ...formData,
         createdBy: userId,
       })
+      
+      if (success) {
+        // Auto-save the updated page
+        setTimeout(() => {
+          const { autoSavePage } = require("@/lib/auth")
+          autoSavePage({ ...formData, id: page.id, createdBy: userId })
+        }, 100)
+      }
+      
       onSuccess()
       onClose()
     } catch (err) {

@@ -61,6 +61,13 @@ export function UserSettingsModal({ isOpen, onClose, onSuccess, user }: UserSett
         if (formData.role === "user") {
           assignPagesToUser(user.id, formData.assignedPages)
         }
+        
+        // Auto-save the updated user
+        setTimeout(() => {
+          const { autoSaveUser } = require("@/lib/auth")
+          autoSaveUser({ ...formData, id: user.id })
+        }, 100)
+        
         onSuccess()
       }
     } catch (error) {

@@ -35,6 +35,12 @@ export function UserCreationModal({ isOpen, onClose, onSuccess }: UserCreationMo
     try {
       const success = createUser(formData)
       if (success) {
+        // Auto-save the newly created user
+        setTimeout(() => {
+          const { autoSaveUser } = require("@/lib/auth")
+          autoSaveUser({ ...formData, id: Date.now().toString() })
+        }, 100)
+        
         onSuccess()
         onClose()
         setFormData({

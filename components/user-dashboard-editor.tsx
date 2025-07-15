@@ -31,6 +31,8 @@ interface UserDashboardEditorProps {
   user: User
   currentUserRole: "admin" | "developer" | "editor"
   onBack: () => void
+  autoSave?: boolean
+  onAutoSave?: (data: any) => void
 }
 
 interface PageContent {
@@ -48,7 +50,13 @@ interface SaveStatus {
   message?: string
 }
 
-export function UserDashboardEditor({ user, currentUserRole, onBack }: UserDashboardEditorProps) {
+export function UserDashboardEditor({ 
+  user, 
+  currentUserRole, 
+  onBack, 
+  autoSave = false,
+  onAutoSave 
+}: UserDashboardEditorProps) {
   const [isEditMode, setIsEditMode] = useState(false)
   const [pageContent, setPageContent] = useState<PageContent>({
     layout: "grid",
@@ -109,14 +117,22 @@ export function UserDashboardEditor({ user, currentUserRole, onBack }: UserDashb
 
   // Debounced auto-save
   useEffect(() => {
-    if (!isEditMode) return
+    if (!isEditMode || !autoSave) return
 
     const timeoutId = setTimeout(() => {
-      autoSave(pageContent)
+      if (onAutoSave) {
+        onAutoSave({
+          id: user.id,
+          dashboardContent: pageContent,
+          lastModified: new Date()
+        })
+      } else {
+        autoSaveContent(pageContent)
+      }
     }, 2000)
 
     return () => clearTimeout(timeoutId)
-  }, [pageContent, isEditMode, autoSave])
+  }, [pageContent, isEditMode, autoSave, onAutoSave, user.id])
 
   const handleContentChange = (newContent: PageContent) => {
     setPageContent(newContent)
@@ -289,7 +305,7 @@ export function UserDashboardEditor({ user, currentUserRole, onBack }: UserDashb
               ) : (
                 <>
                   <Edit3 className="w-4 h-4 mr-2" />
-                  Edit Mode
+                  {autoSave ? "Edit Mode (Auto-save)" : "Edit Mode"}
                 </>
               )}
             </Button>
@@ -337,7 +353,9 @@ export function UserDashboardEditor({ user, currentUserRole, onBack }: UserDashb
       {isEditMode && canEdit && (
         <div className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
           <Edit3 className="w-4 h-4" />
-          <span className="text-sm font-medium">Edit Mode Active</span>
+          <span className="text-sm font-medium">
+            Edit Mode Active {autoSave && "(Auto-save)"}
+          </span>
         </div>
       )}
     </div>

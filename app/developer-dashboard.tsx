@@ -18,6 +18,8 @@ import {
   deletePage,
   getUserById,
   getPageById,
+  autoSavePage,
+  autoSaveUser,
 } from "@/lib/auth"
 import {
   LayoutDashboard,
@@ -38,6 +40,8 @@ import {
   BarChart3,
   Globe,
   ArrowLeft,
+  Monitor,
+  Edit2,
   Wrench,
 } from "lucide-react"
 import { UserSettingsModal } from "@/components/user-settings-modal"
@@ -76,6 +80,8 @@ export default function DeveloperDashboard({ user, onLogout }: DeveloperDashboar
   const [showUserSettingsModal, setShowUserSettingsModal] = useState(false)
   const [selectedUserForSettings, setSelectedUserForSettings] = useState<User | null>(null)
   const [viewingUserPage, setViewingUserPage] = useState<{ user: User; page: Page } | null>(null)
+  const [previewingUser, setPreviewingUser] = useState<User | null>(null)
+  const [editingUserDashboard, setEditingUserDashboard] = useState<User | null>(null)
   const [editingUserPage, setEditingUserPage] = useState<{ user: User; page: Page } | null>(null)
 
   useEffect(() => {
@@ -145,6 +151,25 @@ export default function DeveloperDashboard({ user, onLogout }: DeveloperDashboar
   const handleViewUserPage = (userData: User, page: Page) => {
     setViewingUserPage({ user: userData, page })
     setCurrentPage("user-page-view")
+  }
+
+  const handlePreviewUserDashboard = (userData: User) => {
+    setPreviewingUser(userData)
+    setCurrentPage("user-dashboard-preview")
+  }
+
+  const handleEditUserDashboard = (userData: User) => {
+    setEditingUserDashboard(userData)
+    setCurrentPage("user-dashboard-edit")
+  }
+
+  // Auto-save functionality
+  const handleAutoSave = (data: any, type: 'page' | 'user') => {
+    if (type === 'page') {
+      autoSavePage(data)
+    } else if (type === 'user') {
+      autoSaveUser(data)
+    }
   }
 
   const handleEditUserPage = (userData: User, page: Page) => {
@@ -625,9 +650,25 @@ export default function DeveloperDashboard({ user, onLogout }: DeveloperDashboar
                       <div className="flex gap-2 mt-4">
                         <button
                           onClick={() => handleUserSettings(userData)}
-                          className="flex-1 px-3 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors text-sm"
+                          className="px-3 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors text-sm"
                         >
                           Manage Access
+                        </button>
+                        <button
+                          onClick={() => handlePreviewUserDashboard(userData)}
+                          className="px-3 py-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-800 transition-colors text-sm flex items-center gap-1"
+                          title="Preview Dashboard"
+                        >
+                          <Monitor size={14} />
+                          Preview
+                        </button>
+                        <button
+                          onClick={() => handleEditUserDashboard(userData)}
+                          className="px-3 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors text-sm flex items-center gap-1"
+                          title="Edit Dashboard"
+                        >
+                          <Edit2 size={14} />
+                          Edit
                         </button>
                         <button
                           onClick={() => handleViewUser(userData.id)}
@@ -1042,6 +1083,80 @@ export default function DeveloperDashboard({ user, onLogout }: DeveloperDashboar
           />
         )
 
+      case "user-dashboard-preview":
+        if (!previewingUser) return null
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setCurrentPage("user-pages")}
+                  className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                    Preview: {previewingUser.name}'s Dashboard
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Developer Preview • Read Only • {previewingUser.role.toUpperCase()}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
+                  Preview Mode
+                </div>
+              </div>
+            </div>
+
+            <UserDashboardEditor 
+              user={previewingUser} 
+              currentUserRole="developer" 
+              onBack={() => setCurrentPage("user-pages")}
+            />
+          </div>
+        )
+
+      case "user-dashboard-edit":
+        if (!editingUserDashboard) return null
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setCurrentPage("user-pages")}
+                  className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                    Edit: {editingUserDashboard.name}'s Dashboard
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Developer Edit Mode • Full Access • Auto-save Enabled
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
+                  Edit Mode
+                </div>
+              </div>
+            </div>
+
+            <UserDashboardEditor 
+              user={editingUserDashboard} 
+              currentUserRole="developer" 
+              onBack={() => setCurrentPage("user-pages")}
+              autoSave={true}
+              onAutoSave={(data) => handleAutoSave(data, 'user')}
+            />
+          </div>
+        )
+
       default:
         return null
     }
@@ -1068,6 +1183,14 @@ export default function DeveloperDashboard({ user, onLogout }: DeveloperDashboar
         onSuccess={() => {
           loadData()
           setShowPageModal(false)
+          // Auto-save after page creation
+          setTimeout(() => {
+            const latestPages = getAllPages()
+            const newestPage = latestPages[latestPages.length - 1]
+            if (newestPage) {
+              handleAutoSave(newestPage, 'page')
+            }
+          }, 100)
         }}
         userId={user.id}
       />
@@ -1078,6 +1201,12 @@ export default function DeveloperDashboard({ user, onLogout }: DeveloperDashboar
         onSuccess={() => {
           loadData()
           setShowEditModal(false)
+          // Auto-save after page edit
+          if (selectedPage) {
+            setTimeout(() => {
+              handleAutoSave(selectedPage, 'page')
+            }, 100)
+          }
         }}
         page={selectedPage}
         userId={user.id}
@@ -1088,6 +1217,12 @@ export default function DeveloperDashboard({ user, onLogout }: DeveloperDashboar
         onSuccess={() => {
           loadData()
           setShowUserSettingsModal(false)
+          // Auto-save after user settings change
+          if (selectedUserForSettings) {
+            setTimeout(() => {
+              handleAutoSave(selectedUserForSettings, 'user')
+            }, 100)
+          }
         }}
         user={selectedUserForSettings}
       />

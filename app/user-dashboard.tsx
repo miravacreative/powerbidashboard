@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { BottomNavigation } from "@/components/bottom-navigation"
+import { PasswordChangeModal } from "@/components/password-change-modal"
 import type { User, Page } from "@/lib/auth"
 import { getAllPages, logActivity, getUserAccessiblePages } from "@/lib/auth"
 import {
@@ -31,6 +32,7 @@ export default function UserDashboard({ user, onLogout }: UserDashboardProps) {
   const [showPageInfo, setShowPageInfo] = useState(false)
   const hidePageInfo = true
   const [darkMode, setDarkMode] = useState(false)
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
 
   useEffect(() => {
     setPages(getAllPages())
@@ -307,6 +309,22 @@ export default function UserDashboard({ user, onLogout }: UserDashboardProps) {
             </div>
 
             <button
+              onClick={() => setShowPasswordModal(true)}
+              className="flex items-center gap-2 px-3 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors"
+            >
+              <Lock size={16} />
+              <span className="text-sm font-medium">Change Password</span>
+            </button>
+
+            <button
+              onClick={() => setShowPasswordModal(true)}
+              className="flex items-center gap-2 px-3 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors"
+            >
+              <Lock size={16} />
+              <span className="text-sm font-medium">Change Password</span>
+            </button>
+
+            <button
               onClick={onLogout}
               className="flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
             >
@@ -417,6 +435,17 @@ export default function UserDashboard({ user, onLogout }: UserDashboardProps) {
         currentPageId={selectedPage}
         onPageSelect={handlePageClick}
         onHomeSelect={handleHomeSelect}
+      />
+
+      <PasswordChangeModal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        onSuccess={() => {
+          setShowPasswordModal(false)
+          alert("Password updated successfully!")
+        }}
+        userId={user.id}
+        userName={user.name}
       />
     </div>
   )

@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
-import { LogOut, Menu, X, Settings, Sun, Moon } from "lucide-react"
+import { LogOut, Menu, X, Settings, Sun, Moon, Lock } from "lucide-react"
 import type { AuthUser } from "@/lib/auth"
 import { DynamicBottomNavigation } from "@/components/dynamic-bottom-navigation"
+import { PasswordChangeModal } from "@/components/password-change-modal"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -30,6 +31,7 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
 
   return (
     <div className={`min-h-screen flex flex-col ${darkMode ? "dark bg-gray-900" : "bg-gray-50"}`}>
@@ -68,6 +70,14 @@ export function DashboardLayout({
               <Settings size={16} className="text-gray-600 dark:text-gray-300" />
               <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{user.name}</span>
             </div>
+
+            <button
+              onClick={() => setShowPasswordModal(true)}
+              className="flex items-center gap-2 px-3 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+            >
+              <Lock size={16} />
+              <span className="text-sm font-medium">Change Password</span>
+            </button>
 
             <button
               onClick={onLogout}
@@ -113,6 +123,17 @@ export function DashboardLayout({
           )}
         </main>
       </div>
+
+      <PasswordChangeModal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        onSuccess={() => {
+          setShowPasswordModal(false)
+          alert("Password updated successfully!")
+        }}
+        userId={user.id}
+        userName={user.name}
+      />
     </div>
   )
 }
