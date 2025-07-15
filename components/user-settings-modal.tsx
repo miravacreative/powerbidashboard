@@ -60,6 +60,9 @@ export function UserSettingsModal({ isOpen, onClose, onSuccess, user }: UserSett
         // Update page assignments for regular users
         if (formData.role === "user") {
           assignPagesToUser(user.id, formData.assignedPages)
+        } else {
+          // Clear page assignments for admin/developer roles
+          assignPagesToUser(user.id, [])
         }
         
         // Auto-save the updated user

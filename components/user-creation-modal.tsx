@@ -35,6 +35,14 @@ export function UserCreationModal({ isOpen, onClose, onSuccess }: UserCreationMo
     try {
       const success = createUser(formData)
       if (success) {
+        // Assign pages to user if role is user
+        if (formData.role === "user" && formData.assignedPages.length > 0) {
+          const newUserId = Object.values(getAllUsers()).find(u => u.username === formData.username)?.id
+          if (newUserId) {
+            assignPagesToUser(newUserId, formData.assignedPages)
+          }
+        }
+        
         // Auto-save the newly created user
         setTimeout(() => {
           const { autoSaveUser } = require("@/lib/auth")

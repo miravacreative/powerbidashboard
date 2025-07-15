@@ -40,12 +40,15 @@ export default function UserDashboard({ user, onLogout }: UserDashboardProps) {
 
   // Get available pages for the user - fix the filtering logic
   const availablePages = pages.filter((page) => {
+    if (!page.isActive) return false
+    
     // Admin and Developer can see all active pages
     if (user.role === "admin" || user.role === "developer") {
-      return page.isActive
+      return true
     }
+    
     // Regular users can only see assigned pages
-    return page.isActive && user.assignedPages?.includes(page.id)
+    return user.assignedPages?.includes(page.id) || false
   })
 
   const handlePageClick = (pageId: string) => {

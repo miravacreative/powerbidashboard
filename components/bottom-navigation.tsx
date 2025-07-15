@@ -27,7 +27,7 @@ export function BottomNavigation({ user, currentPageId, onPageSelect, onHomeSele
       }
       
       // Regular users can only see assigned pages
-      return user.assignedPages?.includes(page.id) || false
+      return (user.assignedPages && user.assignedPages.includes(page.id)) || false
     })
     
     setAvailablePages(userPages)
