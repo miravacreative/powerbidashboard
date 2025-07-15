@@ -82,7 +82,7 @@ export function UserDashboardEditor({
   const [saveStatus, setSaveStatus] = useState<SaveStatus>({ status: "idle" })
 
   // Auto-save functionality
-  const autoSave = useCallback(
+  const autoSaveContent = useCallback(
     async (content: PageContent) => {
       if (currentUserRole !== "developer" && currentUserRole !== "editor") return
 
