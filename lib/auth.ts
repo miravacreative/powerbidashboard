@@ -46,30 +46,42 @@ export interface AuthState {
 const users: Record<string, User & { password: string }> = {
   admin: {
     id: "1",
-    username: "admin",
-    password: "admin",
+    username: "bobby",
+    password: "TB123",
     role: "admin",
-    name: "Administrator",
+    name: "Bobby",
     phone: "081234567890",
-    email: "admin@jne.com",
+    email: "ccc@jne.co.id",
     createdAt: new Date("2024-01-01"),
     lastLogin: new Date(),
     isActive: true,
   },
-  developer: {
+  admin 2: {
     id: "2",
-    username: "developer",
-    password: "dev123",
+    username: "ferry",
+    password: "ferry123",
+    role: "admin",
+    name: "Ferry DN",
+    phone: "081234567891",
+    email: "mkt-cbn@jne.co.id",
+    createdAt: new Date("2024-01-15"),
+    lastLogin: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+    isActive: true,
+   }, 
+   developer: {
+    id: "3",
+    username: "Developer",
+    password: "jnecbn09",
     role: "developer",
-    name: "Developer",
+    name: "Developer-IT",
     phone: "081234567891",
     email: "dev@jne.com",
     createdAt: new Date("2024-01-15"),
     lastLogin: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-    isActive: true,
+    isActive: true, 
   },
-  user1: {
-    id: "3",
+   user1: {
+    id: "4",
     username: "user1",
     password: "user123",
     role: "user",
@@ -82,7 +94,7 @@ const users: Record<string, User & { password: string }> = {
     isActive: true,
   },
   user2: {
-    id: "4",
+    id: "5",
     username: "user2",
     password: "user456",
     role: "user",
