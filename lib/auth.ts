@@ -49,26 +49,26 @@ const users: Record<string, User & { password: string }> = {
     username: "admin",
     password: "admin",
     role: "admin",
-    name: "administrator",
+    name: "Administrator",
     phone: "081234567890",
-    email: "ccc@jne.co.id",
+    email: "admin@jne.com",
     createdAt: new Date("2024-01-01"),
     lastLogin: new Date(),
     isActive: true,
-   }, 
-   developer: {
+  },
+  developer: {
     id: "2",
-    username: "Developer",
-    password: "jnecbn09",
+    username: "developer",
+    password: "dev123",
     role: "developer",
-    name: "Developer-IT",
+    name: "Developer",
     phone: "081234567891",
     email: "dev@jne.com",
     createdAt: new Date("2024-01-15"),
     lastLogin: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-    isActive: true, 
+    isActive: true,
   },
-   user1: {
+  user1: {
     id: "3",
     username: "user1",
     password: "user123",
@@ -428,66 +428,5 @@ export const getPageSubTypes = () => {
     powerbi: ["dashboard", "report", "analytics"],
     spreadsheet: ["report", "analytics", "data-entry"],
     html: ["custom", "widget", "form", "landing"],
-  }
-}
-
-export const updateUserPassword = (userId: string, currentPassword: string, newPassword: string): boolean => {
-  const userEntry = Object.entries(users).find(([_, user]) => user.id === userId)
-  if (userEntry) {
-    const [username, user] = userEntry
-    if (user.password === currentPassword) {
-      users[username] = { ...user, password: newPassword }
-      logActivity(userId, "password_change", `User ${user.name} changed password`)
-      return true
-    }
-  }
-  return false
-}
-
-export const getUserAccessiblePages = (userId: string): Page[] => {
-  const user = Object.values(users).find((u) => u.id === userId)
-  if (!user) return []
-
-  const allPages = Object.values(pages)
-  
-  // Admin and Developer can see all active pages
-  if (user.role === "admin" || user.role === "developer") {
-    return allPages.filter(page => page.isActive)
-  }
-  
-  // Regular users can only see assigned pages
-  return allPages.filter(page => 
-    page.isActive && user.assignedPages?.includes(page.id)
-  )
-}
-
-// Auto-save functionality for pages and users
-export const autoSavePage = (pageData: Partial<Page> & { id: string }): boolean => {
-  try {
-    if (pages[pageData.id]) {
-      pages[pageData.id] = { ...pages[pageData.id], ...pageData, updatedAt: new Date() }
-      logActivity(pageData.createdBy || "system", "page_auto_save", `Auto-saved page: ${pages[pageData.id].title}`)
-      return true
-    }
-    return false
-  } catch (error) {
-    console.error("Auto-save failed:", error)
-    return false
-  }
-}
-
-export const autoSaveUser = (userData: Partial<User> & { id: string }): boolean => {
-  try {
-    const userEntry = Object.entries(users).find(([_, user]) => user.id === userData.id)
-    if (userEntry) {
-      const [username, user] = userEntry
-      users[username] = { ...user, ...userData }
-      logActivity(userData.id, "user_auto_save", `Auto-saved user: ${user.name}`)
-      return true
-    }
-    return false
-  } catch (error) {
-    console.error("Auto-save failed:", error)
-    return false
   }
 }
