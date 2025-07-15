@@ -47,7 +47,7 @@ const users: Record<string, User & { password: string }> = {
   admin: {
     id: "1",
     username: "admin",
-    password: "jnecbn09",
+    password: "admin",
     role: "admin",
     name: "administrator",
     phone: "081234567890",
