@@ -209,7 +209,7 @@ let activityLogs: ActivityLog[] = [
 
 export const authenticate = (username: string, password: string): User | null => {
   const user = users[username]
-  if (user && user.password === password && user.isActive) {
+  if (user && user.password === password) {
     // Update last login
     user.lastLogin = new Date()
 
@@ -267,7 +267,7 @@ export const createUser = (userData: {
   const newUser = {
     id: Date.now().toString(),
     ...userData,
-    assignedPages: userData.role === "user" ? (userData.assignedPages || []) : [],
+    assignedPages: userData.assignedPages || [],
     createdAt: new Date(),
     isActive: true,
   }
