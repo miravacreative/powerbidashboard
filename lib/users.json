@@ -1,0 +1,52 @@
+{
+  "admin": {
+    "id": "1",
+    "username": "admin",
+    "password": "jnecbn09",
+    "role": "admin",
+    "name": "administrator",
+    "phone": "081234567890",
+    "email": "ccc@jne.co.id",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "lastLogin": "2025-07-15T01:00:00.000Z",
+    "isActive": true
+  },
+  "developer": {
+    "id": "2",
+    "username": "Developer",
+    "password": "jnecbn09",
+    "role": "developer",
+    "name": "Developer-IT",
+    "phone": "081234567891",
+    "email": "dev@jne.com",
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "lastLogin": "2025-07-15T01:00:00.000Z",
+    "isActive": true
+  },
+  "user1": {
+    "id": "3",
+    "username": "user1",
+    "password": "user123",
+    "role": "user",
+    "name": "Bobby",
+    "phone": "081234567892",
+    "email": "Bobby@example.com",
+    "assignedPages": ["powerbi", "spreadsheet1"],
+    "createdAt": "2024-02-01T00:00:00.000Z",
+    "lastLogin": "2025-07-15T01:00:00.000Z",
+    "isActive": true
+  },
+  "user2": {
+    "id": "4",
+    "username": "user2",
+    "password": "user456",
+    "role": "user",
+    "name": "Ntuy",
+    "phone": "081234567893",
+    "email": "ntuy@example.com",
+    "assignedPages": ["spreadsheet1"],
+    "createdAt": "2024-02-15T00:00:00.000Z",
+    "lastLogin": "2025-07-15T01:00:00.000Z",
+    "isActive": false
+  }
+}
