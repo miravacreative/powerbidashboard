@@ -34,18 +34,11 @@ export function PageCreationModal({ isOpen, onClose, onSuccess, userId }: PageCr
     setError("")
 
     try {
-      const newPage = createPage({
+      createPage({
         ...formData,
         createdBy: userId,
         isActive: true,
       })
-      
-      // Auto-save the newly created page
-      setTimeout(() => {
-        const { autoSavePage } = require("@/lib/auth")
-        autoSavePage(newPage)
-      }, 100)
-      
       onSuccess()
       onClose()
       setFormData({
